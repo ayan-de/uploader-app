@@ -3,7 +3,7 @@ const fs = require("node:fs/promises");
 
 const server = net.createServer(() => {});
 
-let fileHandle, fileStream;
+let fileHandle, fileWriteStream;
 
 server.on("connection", (socket) => {
   console.log("New Connection!");
@@ -12,17 +12,33 @@ server.on("connection", (socket) => {
     //if-else added to make sure that the file is opened only
     //once when the connection is established and started getting data
     //not everytime when we get data
+    //so this if block runs only once(at the initial time)
     if (!fileHandle) {
+      //pause receiving data from client
+      socket.pause();
       //file is opened
       fileHandle = await fs.open(`storage/test.txt`, "w");
       //Read from the socket and write to the stream
-      //creating stream of this fileHandle
-      fileStream = fileHandle.createWriteStream();
+      //creating writeable stream of this fileHandle
+      fileWriteStream = fileHandle.createWriteStream();
       //writing to our destination file
-      fileStream.write(data);
+      fileWriteStream.write(data);
+
+      //resume receiving data from client
+      socket.resume();
+
+      //drain event is only for writeable stream
+      fileWriteStream.on("drain", () => {
+        socket.resume();
+      });
     } else {
-      //writing to our destination file
-      fileStream.write(data);
+      if (
+        //false: Indicates the stream's internal buffer is full, and you should pause writing
+        //writing to our destination file
+        !fileWriteStream.write(data)
+      ) {
+        socket.pause();
+      }
     }
   });
 

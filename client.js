@@ -4,14 +4,26 @@ const fs = require("fs/promises");
 const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
   const filePath = "./text.txt";
   const fileHandle = await fs.open(filePath, "r");
-  const fileStream = fileHandle.createReadStream();
+  //readble stream
+  const fileReadStream = fileHandle.createReadStream();
 
   //Reading from source file
-  fileStream.on("data", (data) => {
-    socket.write(data);
+  fileReadStream.on("data", (data) => {
+    if (
+      //this is means that our internal buffer is full
+      //and we should not write more
+      !socket.write(data)
+    ) {
+      fileReadStream.pause();
+    }
   });
 
-  fileStream.on("end", () => {
+  //drain event on socket because it is used to write to it
+  socket.on("drain", () => {
+    fileReadStream.resume();
+  });
+
+  fileReadStream.on("end", () => {
     console.log("File was successfully uploaded");
     socket.end();
   });
