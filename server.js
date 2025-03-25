@@ -3,15 +3,17 @@ const fs = require("node:fs/promises");
 
 const server = net.createServer(() => {});
 
+let fileHandle, fileStream;
+
 server.on("connection", (socket) => {
   console.log("New Connection!");
 
   socket.on("data", async (data) => {
     //file is opened
-    const fileHandle = await fs.open(`storage/test.txt`, "w");
+    fileHandle = await fs.open(`storage/test.txt`, "w");
     //Read from the socket and write to the stream
     //creating stream of this fileHandle
-    const fileStream = fileHandle.createWriteStream();
+    fileStream = fileHandle.createWriteStream();
     //writing to our destination file
     fileStream.write(data);
   });
