@@ -41,10 +41,12 @@ server.on("connection", (socket) => {
       }
     }
   });
-
+  //this event happens when the client.js file ends the socket
   socket.on("end", () => {
-    console.log("Connection Ended");
     fileHandle.close();
+    fileHandle = undefined;
+    fileWriteStream = undefined;
+    console.log("Connection Ended");
   });
 });
 
