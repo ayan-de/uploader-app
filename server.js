@@ -1,7 +1,7 @@
 const net = require("net");
 const fs = require("node:fs/promises");
 
-const server = net.createConnection(() => {});
+const server = net.createServer(() => {});
 
 server.on("connection", (socket) => {
   console.log("New Connection!");
