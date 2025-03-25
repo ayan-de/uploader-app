@@ -15,6 +15,11 @@ server.on("connection", (socket) => {
     //writing to our destination file
     fileStream.write(data);
   });
+
+  socket.on("end", () => {
+    console.log("Connection Ended");
+    fileHandle.close();
+  });
 });
 
 server.listen("5000", "::1", () => {
