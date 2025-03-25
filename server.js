@@ -12,6 +12,7 @@ server.on("connection", (socket) => {
     //Read from the socket and write to the stream
     //creating stream of this fileHandle
     const fileStream = fileHandle.createWriteStream();
+    //writing to our destination file
     fileStream.write(data);
   });
 });
