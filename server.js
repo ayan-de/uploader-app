@@ -16,8 +16,13 @@ server.on("connection", (socket) => {
     if (!fileHandle) {
       //pause receiving data from client
       socket.pause();
+
+      //from client the data we extract the filename
+      const indexOfDivider = data.indexOf("-------");
+      const fileName = data.subarray(10, indexOfDivider).toString("utf-8");
+
       //file is opened
-      fileHandle = await fs.open(`storage/test.txt`, "w");
+      fileHandle = await fs.open(`storage/${fileName}`, "w");
       //Read from the socket and write to the stream
       //creating writeable stream of this fileHandle
       fileWriteStream = fileHandle.createWriteStream();

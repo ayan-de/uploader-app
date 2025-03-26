@@ -12,7 +12,7 @@ const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
   //readble stream
   const fileReadStream = fileHandle.createReadStream();
 
-  socket.write(`filename: ${fileName}------`);
+  socket.write(`filename: ${fileName}-------`);
 
   //Reading from source file
   fileReadStream.on("data", (data) => {
