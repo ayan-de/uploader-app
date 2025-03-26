@@ -26,8 +26,8 @@ server.on("connection", (socket) => {
       //Read from the socket and write to the stream
       //creating writeable stream of this fileHandle
       fileWriteStream = fileHandle.createWriteStream();
-      //writing to our destination file
-      fileWriteStream.write(data);
+      //writing to our destination file(By discarding the headers)
+      fileWriteStream.write(data.subarray(indexOfDivider + 8));
 
       //resume receiving data from client
       socket.resume();
