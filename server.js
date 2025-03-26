@@ -3,10 +3,9 @@ const fs = require("node:fs/promises");
 
 const server = net.createServer(() => {});
 
-let fileHandle, fileWriteStream;
-
 server.on("connection", (socket) => {
   console.log("New Connection!");
+  let fileHandle, fileWriteStream;
 
   socket.on("data", async (data) => {
     //if-else added to make sure that the file is opened only
