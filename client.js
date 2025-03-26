@@ -12,6 +12,9 @@ const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
   //readble stream
   const fileReadStream = fileHandle.createReadStream();
 
+  //calculate the size of the file in bytes
+  const fileSize = (await fileHandle.stat()).size;
+
   socket.write(`filename: ${fileName}-------`);
 
   //Reading from source file
