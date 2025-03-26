@@ -2,6 +2,24 @@ const net = require("net");
 const fs = require("fs/promises");
 const path = require("path");
 
+//dir means direction
+const clearLine = (dir) => {
+  return new Promise((resolve, rejects) => {
+    process.stdout.clearLine(dir, () => {
+      resolve();
+    });
+  });
+};
+
+//dir means direction
+const moveCursor = (dx, dy) => {
+  return new Promise((resolve, rejects) => {
+    process.stdout.moveCursor(dx, dy, () => {
+      resolve();
+    });
+  });
+};
+
 const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
   // const filePath = "./text.txt";
   //command format "[node, client.js, text.txt]"
@@ -21,14 +39,27 @@ const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
 
   socket.write(`filename: ${fileName}-------`);
 
+  //this log helps us showing uploading percentage without deleting the actual commande by client
+  console.log();
+
   //Reading from source file
-  fileReadStream.on("data", (data) => {
+  fileReadStream.on("data", async (data) => {
     if (
       //this is means that our internal buffer is full
       //and we should not write more
       !socket.write(data)
     ) {
       fileReadStream.pause();
+    }
+    //add the number of bytes read to the variables
+    bytesUploaded = data.length;
+    let newPercentage = Math.floor((bytesUploaded / fileSize) * 100);
+
+    if (newPercentage != uploadPercentage) {
+      uploadPercentage = newPercentage;
+      await moveCursor(0, -1);
+      await clearLine(0);
+      console.log(`Uploading...${uploadPercentage}`);
     }
   });
 
