@@ -15,6 +15,10 @@ const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
   //calculate the size of the file in bytes
   const fileSize = (await fileHandle.stat()).size;
 
+  //for howing the upload progress
+  let uploadPercentage = 0;
+  let bytesUploaded = 0;
+
   socket.write(`filename: ${fileName}-------`);
 
   //Reading from source file
