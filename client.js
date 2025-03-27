@@ -41,6 +41,16 @@ const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
 
   //this log helps us showing uploading percentage without deleting the actual commande by client
   console.log();
+  //show progress bar while uploading the file
+  const renderProgressBar = (percentage) => {
+    const totalBars = 50;
+    const filledBars = Math.floor((percentage / 100) * totalBars);
+    const emptyBars = totalBars - filledBars;
+    const progressBar = `[${"#".repeat(filledBars)}${" ".repeat(
+      emptyBars
+    )}] ${percentage}%`;
+    return progressBar;
+  };
 
   //Reading from source file
   fileReadStream.on("data", async (data) => {
@@ -59,7 +69,8 @@ const socket = net.createConnection({ host: "::1", port: 5000 }, async () => {
       uploadPercentage = newPercentage;
       await moveCursor(0, -1);
       await clearLine(0);
-      console.log(`Uploading...${uploadPercentage}`);
+      // console.log(`Uploading...${uploadPercentage}%`);
+      console.log(renderProgressBar(uploadPercentage));
     }
   });
 
